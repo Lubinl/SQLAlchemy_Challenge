@@ -4,6 +4,7 @@ import numpy as np
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
+import datetime as dt
 
 
 # SET UP FLASK APP
@@ -71,11 +72,15 @@ def stations():
     # Connect to database
     session = Session(engine)
 
-    # YOUR JOB: DEFINE THE stations_list VARIABLE
+    # YOUR JOB: DEFINE THE stations_as_list VARIABLE
+    station_list = session.query(Station.station).order_by(Station.station).all()
 
+    stations_as_list = []
+    for station in station_list:
+        stations_as_list.append(station[0])
     # Disconnect from database
     session.close()
-    return jsonify(stations_list)
+    return jsonify(stations_as_list)
 
 
 ################################################################
@@ -87,7 +92,20 @@ def tobs():
     session = Session(engine)
 
     # YOUR JOB: DEFINE THE tobs_data VARIABLE
-
+    top_station_id = 'USC00519281'
+    session.query(func.min(Measurement.tobs),
+    func.max(Measurement.tobs),
+    func.avg(Measurement.tobs)).filter(Measurement.station ==top_station_id).all()
+    temp_recent_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()[0]
+    temp_recent_year = int(temp_recent_date[0:4])
+    temp_recent_month = int(temp_recent_date[5:7])
+    temp_recent_day = int(temp_recent_date[8:])
+    year_of_temp_data = dt.date(temp_recent_year,temp_recent_month,temp_recent_day) - dt.timedelta(days=365)
+    temp_query_results = session.query(Measurement.date, Measurement.station, Measurement.tobs).filter(Measurement.station == top_station_id, Measurement.date >= year_of_temp_data).all()
+    temp_query_results
+    tobs_data = []
+    for obs in temp_query_results:
+        tobs_data.append(obs[2])
     # Disconnect from database
     session.close()
     return jsonify(tobs_data)
