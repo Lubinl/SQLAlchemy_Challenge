@@ -113,20 +113,50 @@ def tobs():
 
 ################################################################
 @app.route("/api/v1.0/temp/<start>")
+def start_date(start='YYYY-MM-DD'):
+    
+    # Connect to database
+    session = Session(engine)
+
+    print(start)
+
+    result = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).all()
+    temps_filtered_by_date = []
+    for TMIN, TAVG, TMAX in result:
+        temps_filtered_by_date_dict = {}
+        temps_filtered_by_date['TMIN'] = TMIN
+        temps_filtered_by_date['TAVG'] = TAVG
+        temps_filtered_by_date['TMAX'] = TMAX
+        temps_filtered_by_date.append(temps_filtered_by_date_dict)
+
+
+    # Disconnect from database
+    session.close()
+    return jsonify(temps_filtered_by_date)
+
 @app.route("/api/v1.0/temp/<start>/<end>")
 # Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
 # When given the start only, calculate `TMIN`, `TAVG`, and `TMAX` for all dates greater than and equal to the start date.
 # When given the start and the end date, calculate the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.
-def start_and_end(start='YYYY-MM-DD', end='YYYY-MM-DD'):
+def start_and_end_date(start='YYYY-MM-DD', end='YYYY-MM-DD'):
     
     # Connect to database
     session = Session(engine)
 
     print(start,end)
 
+    result = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    temps_filtered_by_date_list = []
+    for TMIN, TAVG, TMAX in result:
+        temps_filtered_by_date_dict = {}
+        temps_filtered_by_date_dict['TMIN'] = TMIN
+        temps_filtered_by_date_dict['TAVG'] = TAVG
+        temps_filtered_by_date_dict['TMAX'] = TMAX
+        temps_filtered_by_date_list.append(temps_filtered_by_date_dict)
+
     # Disconnect from database
     session.close()
-    return jsonify(temps_filtered_by_date)
+    return jsonify(temps_filtered_by_date_list)
 
 # Run the Flask app that was created at the top of this file --> app = Flask(__name__)
 ################################################################
