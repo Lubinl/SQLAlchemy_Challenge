@@ -124,9 +124,9 @@ def start_date(start='YYYY-MM-DD'):
     temps_filtered_by_date = []
     for TMIN, TAVG, TMAX in result:
         temps_filtered_by_date_dict = {}
-        temps_filtered_by_date['TMIN'] = TMIN
-        temps_filtered_by_date['TAVG'] = TAVG
-        temps_filtered_by_date['TMAX'] = TMAX
+        temps_filtered_by_date_dict['TMIN'] = TMIN
+        temps_filtered_by_date_dict['TAVG'] = TAVG
+        temps_filtered_by_date_dict['TMAX'] = TMAX
         temps_filtered_by_date.append(temps_filtered_by_date_dict)
 
 
