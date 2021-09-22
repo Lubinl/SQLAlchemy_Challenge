@@ -13,6 +13,7 @@ Surfs Up!
 In this challenge, we're on vacation in Honolulu, Hawaii! In order to plan ahead, we're to conduct analysis of percipation and climate stations with the use. We're then going to use said information to create a Flask API. App will be used to generate: average percipitation per day, climate stations, temp. observation after for most active station, along with the min, max, and avg readings within a given period.
 
 Final Solution:
+
 ![](Generated_Images/screen_shot.png)
 
 ## File Descriptions
